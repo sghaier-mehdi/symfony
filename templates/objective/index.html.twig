@@ -1,0 +1,77 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Objective Management{% endblock %}
+
+{% block body %}
+    <div class="container my-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Objective Management</h1>
+            <a href="{{ path('app_objective_new') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create new
+            </a>
+        </div>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Points Required</th>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <th>Assigned User</th>
+                                {% endif %}
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for objective in objectives %}
+                            <tr>
+                                <td>{{ objective.id }}</td>
+                                <td>{{ objective.title }}</td>
+                                <td>{{ objective.pointsRequired }}</td>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <td>
+                                        {% if objective.user %}
+                                            {{ objective.user.email }}
+                                        {% else %}
+                                            <span class="text-muted">Unassigned</span>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                                <td>{{ objective.createdAt ? objective.createdAt|date('Y-m-d H:i') : '' }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ path('app_objective_show', {'id': objective.id}) }}" class="btn btn-sm btn-info">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ path('app_objective_edit', {'id': objective.id}) }}" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="{{ is_granted('ROLE_ADMIN') ? 6 : 5 }}" class="text-center">No objectives found</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 
