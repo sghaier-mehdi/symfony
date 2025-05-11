@@ -1,0 +1,67 @@
+{# templates/user/index.html.twig #}
+{% extends 'back/base.html.twig' %}
+
+{% block title %}User index{% endblock %}
+
+{% block body %}
+    <div class="admin-table-container mt-4"> {# Optional: Wrapper for title + table #}
+        <h1>User Management</h1>
+
+        <a href="{{ path('app_users_new') }}" class="btn btn-success mb-3">
+            <i class="bi bi-plus-circle"></i> Create New User
+        </a>
+
+        <table class="table admin-table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.fullName }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>
+                        {# --- STYLED BUTTONS --- #}
+                        <a href="{{ path('app_users_show', {'id': user.id}) }}" class="btn btn-sm btn-info me-1" title="View">
+                            <i class="bi bi-eye"></i> {# Bootstrap Icon for view #}
+                        </a>
+                        <a href="{{ path('app_users_edit', {'id': user.id}) }}" class="btn btn-sm btn-primary me-1" title="Edit">
+                            <i class="bi bi-pencil-square"></i> {# Bootstrap Icon for edit #}
+                        </a>
+                        {# The delete action is often a small form for CSRF protection #}
+                        {# You can style the button within the form generated in _delete_form.html.twig #}
+                        {# Or, if it's simple, ensure the button inside the delete form has button classes #}
+                        {# Example of including the delete form (if it's separate) #}
+                        {# {{ include('user/_delete_form.html.twig', {'user': user}, with_context = false) }} #}
+
+                        {# If delete is a direct form in the index (common with make:crud): #}
+                        <form method="post" action="{{ path('app_users_delete', {'id': user.id}) }}"
+                              onsubmit="return confirm('Are you sure you want to delete this item?');"
+                              style="display: inline-block;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                            <button class="btn btn-sm btn-danger" title="Delete">
+                                <i class="bi bi-trash"></i> {# Bootstrap Icon for delete #}
+                            </button>
+                        </form>
+                        {# --- END STYLED BUTTONS --- #}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">No users found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

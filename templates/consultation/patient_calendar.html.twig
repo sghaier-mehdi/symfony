@@ -1,0 +1,143 @@
+{# templates/consultation/patient_calendar.html.twig #h}
+{% extends 'front/base.html.twig' %} {# Extend your front end layout #}
+
+{% block title %}My Consultation Calendar{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {# FullCalendar CSS #}
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css' rel='stylesheet' />
+    {# Add custom CSS for calendar if needed #}
+    <style>
+        /* Example custom styles for calendar */
+        #calendar {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff; /* White background */
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+         /* Style the header */
+         .fc-header-toolbar {
+             margin-bottom: 1.5em !important;
+             font-size: 1.2em; /* Slightly larger header text */
+         }
+
+         /* Style event colors (matching controller logic) */
+         .fc-event-main {
+             color: #fff !important; /* White text on events */
+         }
+         .fc-event-cancelled {
+             background-color: #dc3545 !important; /* Bootstrap danger color */
+             border-color: #dc3545 !important;
+         }
+         .fc-event-scheduled {
+              background-color: #28a745 !important; /* Bootstrap success color */
+             border-color: #28a745 !important;
+         }
+         /* Add styles for other statuses if you use different colors in the controller */
+
+         /* Style day numbers */
+         .fc-daygrid-day-number {
+             padding: 5px;
+         }
+
+         /* Style today's date */
+         .fc-day-today {
+             background-color: #fffbe6 !important; /* Light yellow background for today */
+         }
+
+    </style>
+
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>My Consultation Calendar</h1>
+
+        {# Add a link back to the list view if desired #}
+         <a href="{{ path('app_consultation_index') }}" class="btn btn-secondary mb-3">View as List</a>
+
+
+        {# This is where the calendar will be rendered by JavaScript #}
+        <div id='calendar'></div>
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {# FullCalendar JS #}
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
+    {# Optional: FullCalendar locales (e.g., for French dates/month names) #}
+    {# <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/locales-all.js'></script> #} {# Or individual locale #}
+    {# <script> FullCalendar.globalLocales.push(FullCalendar.locales['fr']); </script> #} {# Or set locale in calendar options #}
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth', // Default view (Month)
+                headerToolbar: {
+                    left: 'prev,next today', // Buttons on the left
+                    center: 'title', // Title in the center
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay' // View options on the right
+                },
+                // Optional: Set locale if you included locale scripts
+                // locale: 'fr',
+
+                // Allow clicking on dates to potentially add events (requires more JS)
+                // selectable: true,
+                // select: function(info) { alert('selected ' + info.startStr + ' to ' + info.endStr); },
+
+                // Configure event sources - we're using a static array from the controller
+                events: {{ events_json | raw }}, // *** Use the JSON data passed from controller ***
+
+                // Customize event appearance and behavior
+                eventDisplay: 'block', // Display as a block
+                eventTextColor: '#fff', // White text color for events
+                eventBackgroundColor: '#28a745', // Default green background (can be overridden by individual event objects)
+                eventBorderColor: 'transparent', // No border
+
+                // Add custom class names to events based on status for CSS styling
+                 eventClassNames: function(arg) {
+                     // arg.event.extendedProps contains any extra data you pass in the controller's event object
+                     if (arg.event.backgroundColor === '#dc3545') { // Check the color set in controller
+                         return ['fc-event-cancelled'];
+                     } else {
+                         return ['fc-event-scheduled'];
+                     }
+                     // More robust would be to pass status directly in extendedProps and check that
+                     // e.g., 'extendedProps': { 'status': consultation.getStatus() }
+                     // Then: if (arg.event.extendedProps.status === 'CANCELLED') { return ['fc-event-cancelled']; }
+                 },
+
+
+                // Action when an event is clicked
+                eventClick: function(info) {
+                    // Check if the event has a URL (we set this in the controller)
+                    if (info.event.url) {
+                         // Open the URL in a new tab
+                         window.open(info.event.url, '_blank');
+                         // Prevent the browser's default action (following the link directly)
+                         return false;
+                    }
+                },
+
+                // Optional: Initial date for the calendar
+                // initialDate: '{{ "now"|date("Y-m-d") }}',
+
+                // Optional: Configure time grid view if using timeGridWeek/Day
+                slotMinTime: '08:00:00', // Start time for time grid view
+                slotMaxTime: '20:00:00', // End time for time grid view
+                expandRows: true, // Expand rows to fill available height
+            });
+
+            // Render the calendar on the page
+            calendar.render();
+        });
+    </script>
+{% endblock %}

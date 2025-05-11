@@ -1,0 +1,45 @@
+{# templates/article/_form.html.twig #}
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }} {# novalidate disables browser validation, relying on Symfony's #}
+    {# Render fields with Bootstrap structure if needed, or use form_widget for simplicity #}
+    {# Example of rendering fields individually for more control over layout #}
+    <div class="mb-3">
+        {{ form_label(form.title) }}
+        {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.title) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.content) }}
+        {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 10 }}) }}
+        {{ form_errors(form.content) }}
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.category) }}
+            {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }} {# Use form-select for select elements #}
+            {{ form_errors(form.category) }}
+        </div>
+        <div class="col-md-6 mb-3">
+            {{ form_label(form.imageUrl) }}
+            {{ form_widget(form.imageUrl, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.imageUrl) }}
+        </div>
+    </div>
+
+    <div class="mb-3 form-check">
+        {{ form_widget(form.isPublished, {'attr': {'class': 'form-check-input'}}) }}
+        {{ form_label(form.isPublished, null, {'label_attr': {'class': 'form-check-label'}}) }}
+        {{ form_errors(form.isPublished) }}
+    </div>
+
+    {# If you want to render all unrendered fields (like CSRF token): #}
+    {# {{ form_rest(form) }} #}
+    {# Or render the token explicitly if you don't render all fields individually #}
+    {{ form_row(form._token) }}
+
+
+    <button class="btn btn-primary mt-3" type="submit">
+        <i class="bi bi-check-circle"></i> {{ button_label|default('Save Article') }}
+    </button>
+{{ form_end(form) }}

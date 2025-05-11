@@ -1,0 +1,14 @@
+{# templates/category/_form.html.twig #}
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="mb-3">
+        {{ form_label(form.name) }}
+        {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.name) }}
+    </div>
+
+    {{ form_row(form._token) }} {# Render CSRF token #}
+
+    <button class="btn btn-primary mt-3" type="submit">
+        <i class="bi bi-check-circle"></i> {{ button_label|default('Save Category') }}
+    </button>
+{{ form_end(form) }}

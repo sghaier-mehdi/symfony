@@ -1,0 +1,27 @@
+{# templates/consultation/edit.html.twig #}
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Edit Consultation{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Edit Consultation #{{ consultation.id }}</h1>
+
+         {# Display key details here for context #}
+         <p><strong>Patient:</strong> {{ consultation.patient.fullName }}</p>
+         <p><strong>Psychiatrist:</strong> {{ consultation.psychiatrist.fullName }}</p>
+         <p><strong>Date & Time:</strong> {{ consultation.consultationTime ? consultation.consultationTime|date('Y-m-d H:i') : '' }}</p>
+         <p><strong>Purpose:</strong> {{ consultation.purpose | default('N/A') }}</p>
+
+
+        {{ form_start(form) }}
+            {{ form_row(form.status) }}
+            {{ form_row(form.notes) }}
+
+            <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+        {{ form_end(form) }}
+
+        <a href="{{ path('app_consultation_show', {'id': consultation.id}) }}" class="btn btn-secondary mt-3">Cancel</a>
+
+    </div>
+{% endblock %}

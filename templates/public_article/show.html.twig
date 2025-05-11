@@ -1,0 +1,49 @@
+{# templates/public_article/show.html.twig #}
+{% extends 'front/base.html.twig' %}
+
+{% block title %}{{ article.title }} - WellTech{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <article>
+        <header class="mb-4">
+            <h1 class="fw-bolder mb-1">{{ article.title }}</h1>
+            <div class="text-muted fst-italic mb-2">
+                Posted on {{ article.createdAt|date('F j, Y') }} by {{ article.author.fullName|default('Unknown Author') }}
+                {% if article.category %}
+                     | Category: <a href="#" class="text-decoration-none">{{ article.category.name }}</a> {# Link to category page later #}
+                {% endif %}
+            </div>
+        </header>
+
+        {% if article.imageUrl %}
+            <figure class="mb-4">
+                <img class="img-fluid rounded" src="{{ article.imageUrl }}" alt="{{ article.title }}" style="max-height: 400px; width: auto; display: block; margin-left: auto; margin-right: auto;">
+            </figure>
+        {% endif %}
+
+        <section class="mb-5 article-content">
+            {# Display full content, use 'raw' filter if content contains HTML you trust #}
+            {# If content is plain text or Markdown, you might process it differently #}
+            {{ article.content|nl2br }} {# nl2br converts newlines to <br> for plain text #}
+        </section>
+    </article>
+
+    <hr>
+
+    <a href="{{ path('app_public_article_index') }}" class="btn btn-outline-secondary mb-4">« Back to Articles</a>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }} {# Include parent stylesheets #}
+    <style>
+        .article-content {
+            line-height: 1.8; /* Improve readability */
+            font-size: 1.1rem;
+        }
+        .article-content p {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+{% endblock %}

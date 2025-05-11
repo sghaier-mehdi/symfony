@@ -1,0 +1,23 @@
+{# templates/home/index.html.twig #}
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Welcome to WellTech!{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Welcome to WellTech</h1>
+    <p>Your platform for mental health resources and consultations.</p>
+
+    {# Example links (add more later) #}
+   {# <a href="{{ path('#') }}" class="btn btn-primary">Browse Articles</a> #}
+
+    {% if app.user %}
+        <p>Logged in as {{ app.user.userIdentifier }}.</p>
+         <a href="{{ path('app_dashboard') }}" class="btn btn-secondary">Go to Dashboard</a>
+        <a href="{{ path('app_logout') }}" class="btn btn-warning">Logout</a>
+    {% else %}
+        <a href="{{ path('app_login') }}" class="btn btn-success">Login</a>
+        <a href="{{ path('app_register') }}" class="btn btn-info">Register</a>
+    {% endif %}
+</div>
+{% endblock %}

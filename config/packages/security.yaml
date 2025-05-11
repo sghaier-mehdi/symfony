@@ -1,17 +1,42 @@
+# config/packages/security.yaml
 security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        # *** THIS PROVIDER LOADS USERS FROM YOUR DATABASE USING THE USER ENTITY ***
+        app_user_provider: # You can name this anything, 'app_user_provider' is common
+            entity:
+                class: App\Entity\User # <-- Point this to your User entity class
+                property: username # <-- CRITICAL: This MUST be the field you are using for LOGIN (username or email)
+
+        # *** REMOVE OR COMMENT OUT THIS UNUSED PROVIDER ***
+        # users_in_memory: { memory: null }
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         main:
             lazy: true
-            provider: users_in_memory
+            # *** THIS MUST USE THE 'app_user_provider' DEFINED ABOVE ***
+            provider: app_user_provider
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+                # Where to redirect after successful login (add or uncomment)
+                default_target_path: app_home # Use the route name for your dashboard
+                # default_target_path: /             # Or redirect to the home page if no dashboard yet
+
+            logout:
+                path: app_logout
+                # where to redirect after logout (add or uncomment)
+                target: app_home # Use the route name for your home page
+                # target: /      # Or redirect to the home page
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -21,17 +46,27 @@ security:
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
+    # Keep your access_control rules here. When the provider is fixed,
+    # the rule allowing anonymous access to /login will work correctly.
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        # Keep your access control rules here, e.g.:
+        # - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        # - { path: ^/register$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        # - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        # - { path: ^/, roles: IS_AUTHENTICATED_FULLY } # Default deny for others
+
+        # Or the deny-then-allow structure from the previous attempt if you prefer:
+        # - { path: ^/, roles: IS_AUTHENTICATED_FULLY } # Default deny
+        # - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        # - { path: ^/register$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        # - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        # Add other public paths here as needed
+        # - { path: ^/articles$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+
 
 when@test:
     security:
         password_hashers:
-            # By default, password hashers are resource intensive and take time. This is
-            # important to generate secure password hashes. In tests however, secure hashes
-            # are not important, waste resources and increase test times. The following
-            # reduces the work factor to the lowest possible values.
             Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
                 algorithm: auto
                 cost: 4 # Lowest possible value for bcrypt

@@ -1,0 +1,87 @@
+{# templates/consultation/index.html.twig #}
+{% extends 'back/base.html.twig' %}
+
+{% block title %}My Consultations{% endblock %} {# Default title #}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>
+            {% if user_role == 'ADMIN' %}
+                All Consultations
+            {% elseif user_role == 'PSYCHIATRIST' %}
+                My Consultations Schedule
+            {% elseif user_role == 'PATIENT' %}
+                My Consultations (List View)
+            {% else %}
+                Consultations
+            {% endif %}
+        </h1>
+
+        {# Add "Create Consultation" button for Psych/Admin #}
+        {% if is_granted('ROLE_PSYCHIATRIST') or is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('app_consultation_create') }}" class="btn btn-primary mb-3">Create New Consultation</a>
+        {% endif %}
+
+        {# Add "Calendar View" button for Patients #}
+         {% if is_granted('ROLE_PATIENT') %}
+             <a href="{{ path('app_consultation_patient_calendar') }}" class="btn btn-secondary mb-3">View on Calendar</a>
+         {% endif %}
+
+
+        {% if consultations is empty %}
+            <p>No consultations found.</p>
+        {% else %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        {% if user_role != 'PATIENT' %} {# Psychiatrist/Admin see the Patient #}
+                            <th>Patient</th>
+                        {% endif %}
+                        {% if user_role != 'PSYCHIATRIST' %} {# Patient/Admin see the Psychiatrist #}
+                            <th>Psychiatrist</th>
+                        {% endif %}
+                        <th>Purpose</th>
+                        <th>Duration</th>
+                        <th>Status</th>
+                         <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for consultation in consultations %}
+                        <tr>
+                            <td>{{ consultation.consultationTime ? consultation.consultationTime|date('Y-m-d H:i') : '' }}</td>
+                            {% if user_role != 'PATIENT' %}
+                                <td>{{ consultation.patient.fullName }}</td>
+                            {% endif %}
+                            {% if user_role != 'PSYCHIATRIST' %}
+                                <td>{{ consultation.psychiatrist.fullName }}</td>
+                            {% endif %}
+                            <td>{{ consultation.purpose | default('N/A') }}</td>
+                            <td>{{ consultation.durationMinutes | default('N/A') }} min</td>
+                            <td>{{ consultation.status }}</td>
+                            <td>
+                                 {# Always link to view details (if role allows - handled by show action security) #}
+                                <a href="{{ path('app_consultation_show', {'id': consultation.id}) }}" class="btn btn-sm btn-info">View</a>
+
+                                {# Edit button for Psychiatrist (their consultations) or Admin #}
+                                {% if (is_granted('ROLE_PSYCHIATRIST') and consultation.psychiatrist == app.user) or is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('app_consultation_edit', {'id': consultation.id}) }}" class="btn btn-sm btn-warning">Edit</a>
+                                {% endif %}
+
+                                {# Delete button for Admin only #}
+                                {% if is_granted('ROLE_ADMIN') %}
+                                     {# Use a small form for DELETE method and CSRF token #}
+                                     <form method="post" action="{{ path('app_consultation_delete', {'id': consultation.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');" style="display: inline-block;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ consultation.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}

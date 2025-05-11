@@ -1,0 +1,32 @@
+{# templates/dashboard/index.html.twig #}
+{% extends 'back/base.html.twig' %} {# Or 'back/base.html.twig' if it's an admin dashboard #}
+
+{% block title %}Dashboard - WellTech{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Welcome to your Dashboard, {{ user.fullName }}!</h1>
+    <p>Your role: {{ user.role }}</p>
+
+    <h2>Quick Links:</h2>
+    <ul>
+        {% if is_granted('ROLE_PATIENT') %}
+        {#     <li><a href="{{ path('app_consultation_book') }}">Book a New Consultation</a></li>
+            <li><a href="{{ path('app_consultation_index') }}">View My Consultations</a></li>#}
+        {% endif %}
+        {% if is_granted('ROLE_PSYCHIATRIST') %}
+             <li><a href="{{ path('app_admin_article_index') }}">Manage Articles</a></li> {# We'll create this later #}
+            {#  <li><a href="{{ path('app_consultation_index') }}">View My Consultations</a></li>#}
+        {% endif %}
+         {% if is_granted('ROLE_ADMIN') %}
+            <li><a href="{{ path('app_users_index') }}">Manage Users</a></li> {# We'll create this later #}
+            <li><a href="{{ path('app_category_index') }}">Manage Categories</a></li> {# We'll create this later #}
+            <li><a href="{{ path('app_admin_article_index') }}">Manage All Articles</a></li> {# We'll create this later #}
+            {# <li><a href="{{ path('app_consultation_index') }}">View All Consultations</a></li>#}
+        {% endif %}
+    </ul>
+
+     <a href="{{ path('app_logout') }}" class="btn btn-warning mt-3">Logout</a>
+
+</div>
+{% endblock %}
