@@ -1,0 +1,77 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Coupon Management{% endblock %}
+
+{% block body %}
+    <div class="container my-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Coupon Management</h1>
+            <a href="{{ path('app_coupon_new') }}" class="btn btn-primary">
+                <i class="fa fa-plus"></i> Create new
+            </a>
+        </div>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Code</th>
+                                <th>Discount</th>
+                                <th>Expiration Date</th>
+                                <th>Status</th>
+                                <th>Usage Count</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for coupon in coupons %}
+                            <tr>
+                                <td>{{ coupon.id }}</td>
+                                <td>{{ coupon.name }}</td>
+                                <td><code>{{ coupon.code }}</code></td>
+                                <td>{{ coupon.discountPercentage }}%</td>
+                                <td>{{ coupon.expirationDate ? coupon.expirationDate|date('Y-m-d H:i') : '' }}</td>
+                                <td>
+                                    {% if coupon.isActive %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ coupon.usageCount }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ path('app_coupon_show', {'id': coupon.id}) }}" class="btn btn-sm btn-info">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                        <a href="{{ path('app_coupon_edit', {'id': coupon.id}) }}" class="btn btn-sm btn-warning">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center">No coupons found</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

@@ -1,0 +1,45 @@
+{{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+    <div class="mb-3">
+        {{ form_label(form.name) }}
+        {{ form_widget(form.name) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.name) }}
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        {{ form_label(form.code) }}
+        {{ form_widget(form.code) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.code) }}
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        {{ form_label(form.discountPercentage) }}
+        {{ form_widget(form.discountPercentage) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.discountPercentage) }}
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        {{ form_label(form.expirationDate) }}
+        {{ form_widget(form.expirationDate) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.expirationDate) }}
+        </div>
+    </div>
+    
+    <div class="mb-3 form-check">
+        {{ form_widget(form.isActive) }}
+        {{ form_label(form.isActive) }}
+        <div class="invalid-feedback">
+            {{ form_errors(form.isActive) }}
+        </div>
+    </div>
+    
+    <div class="d-grid gap-2">
+        <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+    </div>
+{{ form_end(form) }} 
