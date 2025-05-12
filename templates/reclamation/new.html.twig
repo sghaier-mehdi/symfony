@@ -1,0 +1,15 @@
+{# templates/reclamation/new.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Réclamation{% endblock %}
+
+{% block body %}
+    <h1>Soumettre une Nouvelle Réclamation</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-success mt-3">{{ button_label|default('Envoyer Réclamation') }}</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_reclamation_index') }}" class="btn btn-link mt-3">Retour à mes réclamations</a>
+{% endblock %}

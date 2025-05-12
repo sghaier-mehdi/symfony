@@ -1,0 +1,38 @@
+{# templates/admin_reclamation/respond.html.twig #}
+{% extends 'back/base.html.twig' %} {# Or your admin base template #}
+
+{% block title %}{{ page_title | default('Répondre à la Réclamation') }}{% endblock %}
+
+{% block body %}
+    <h1>{{ page_title | default('Répondre à la Réclamation') }}</h1>
+    <div class="card mb-4">
+        <div class="card-header">
+            Détails de la Réclamation
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{ reclamation.titre }}</h5>
+            <p class="card-text"><small class="text-muted">Soumis par: {{ reclamation.user ? reclamation.user.fullName : 'N/A' }} le {{ reclamation.dateCreation|date('d/m/Y H:i') }}</small></p>
+            <p class="card-text"><strong>Type:</strong> {{ reclamation.typeReclamation }}</p>
+            <p class="card-text"><strong>Sentiment:</strong> {{ reclamation.sentiment }}</p>
+            <p class="card-text"><strong>Urgent:</strong> {{ reclamation.urgent ? 'Oui' : 'Non' }}</p>
+            <hr>
+            <p class="card-text">{{ reclamation.contenu|nl2br }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            Votre Réponse
+        </div>
+        <div class="card-body">
+            {{ form_start(reponseForm) }}
+                {{ form_widget(reponseForm) }} {# Renders all fields, including labels and errors #}
+                <button type="submit" class="btn btn-success mt-3">
+                    {{ reponse.id ? 'Mettre à Jour la Réponse' : 'Envoyer la Réponse' }}
+                </button>
+            {{ form_end(reponseForm) }}
+        </div>
+    </div>
+
+    <a href="{{ path('admin_reclamation_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+{% endblock %}

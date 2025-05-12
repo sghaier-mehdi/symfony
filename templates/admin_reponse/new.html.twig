@@ -1,0 +1,19 @@
+{# templates/admin_reponse/new.html.twig #}
+{% extends 'back/base.html.twig' %} {# Or your admin base template #}
+
+{% block title %}Ajouter une Réponse{% endblock %}
+
+{% block body %}
+    <h1>Ajouter une Réponse</h1>
+    <p><strong>Pour la Réclamation :</strong> {{ reclamation.titre }}</p> {# Assuming 'reclamation' is passed to this template #}
+    <p><em>Soumis par : {{ reclamation.user ? reclamation.user.fullName : 'N/A' }}</em></p>
+    <hr>
+    <h5>Contenu de la réclamation originale :</h5>
+    <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; border-radius: 5px; margin-bottom:20px;">
+        {{ reclamation.contenu|nl2br }}
+    </div>
+
+    {{ include('admin_reponse/_form.html.twig', {'button_label': 'Envoyer la Réponse'}) }}
+
+    <a href="{{ path('admin_reclamation_index') }}" class="btn btn-link mt-3">Annuler et Retour à la liste</a>
+{% endblock %}

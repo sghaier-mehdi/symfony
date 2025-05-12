@@ -1,0 +1,62 @@
+{# templates/reclamation/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Réclamations{% endblock %}
+
+{% block body %}
+    <h1>Mes Réclamations</h1>
+
+    <a href="{{ path('app_reclamation_new') }}" class="btn btn-primary mb-3">Nouvelle Réclamation</a>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% if reclamations is not empty %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Type</th>
+                    <th>Date Soumission</th>
+                    <th>Sentiment</th>
+                    <th>Urgent</th>
+                    <th>Réponse Admin</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for reclamation in reclamations %}
+                <tr>
+                    <td>{{ reclamation.titre }}</td>
+                    <td>{{ reclamation.typeReclamation }}</td>
+                    <td>{{ reclamation.dateCreation ? reclamation.dateCreation|date('d/m/Y H:i') : '' }}</td>
+                    <td>{{ reclamation.sentiment }}</td>
+                    <td>{{ reclamation.urgent ? 'Oui' : 'Non' }}</td>
+                    <td>
+                        {% if reclamation.reponse %}
+                            <p><strong>Le {{ reclamation.reponse.dateReponse|date('d/m/Y') }}:</strong></p>
+                            <p>{{ reclamation.reponse.contenu|slice(0, 100) ~ '...' }}</p>
+                            {# <a href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}">Voir détails</a> #}
+                        {% else %}
+                            <span class="text-muted">Aucune réponse pour le moment</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {# <a href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}" class="btn btn-sm btn-info">Voir</a> #}
+                        {# Add edit/delete buttons here if needed for user, with proper checks #}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">Vous n'avez soumis aucune réclamation.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Vous n'avez soumis aucune réclamation pour le moment.</p>
+    {% endif %}
+{% endblock %}

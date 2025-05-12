@@ -1,0 +1,18 @@
+{# templates/admin_reponse/edit.html.twig #}
+{% extends 'back/base.html.twig' %} {# Or your admin base template #}
+
+{% block title %}Modifier la Réponse{% endblock %}
+
+{% block body %}
+    <h1>Modifier la Réponse</h1>
+    <p><strong>Pour la Réclamation :</strong> {{ reponse.reclamation.titre }}</p>
+    <p><em>Soumis par : {{ reponse.reclamation.user ? reponse.reclamation.user.fullName : 'N/A' }}</em></p>
+    <hr>
+
+    {{ include('admin_reponse/_form.html.twig', {'button_label': 'Mettre à Jour'}) }}
+
+    <a href="{{ path('admin_reclamation_index') }}" class="btn btn-link mt-3">Annuler et Retour à la liste</a>
+
+    {# Optionally add a delete form for the response itself on the edit page #}
+    {# {{ include('admin_reponse/_delete_form.html.twig') }} #}
+{% endblock %}
